@@ -1,7 +1,7 @@
 pipeline {
   agent {
     node {
-      label 'NodeJS 10.5.0'
+      label 'any'
     }
 
   }
