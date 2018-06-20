@@ -3,7 +3,11 @@ pipeline {
   stages {
     stage('Development') {
       steps {
-        sh 'docker-compose build && docker-compose up'
+        sh '''npm install && export NODE_ENV=production
+
+&& npm run build
+
+&& npm start'''
       }
     }
   }
