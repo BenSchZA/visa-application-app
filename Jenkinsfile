@@ -1,19 +1,20 @@
 pipeline {
   agent {
-    node {
-      label 'Development'
+    docker {
+      image 'node:6-alpine'
+      args '-p 3000:3000'
     }
 
   }
   stages {
-    stage('Development') {
+    stage('Build') {
       steps {
-        sh 'export PATH=/usr/local/bin:$PATH'
-        sh '''npm install && export NODE_ENV=production
-
-&& npm run build
-
-&& npm start'''
+        sh 'npm install && export NODE_ENV=production && npm run build'
+      }
+    }
+    stage('Deploy') {
+      steps {
+        sh 'npm start'
       }
     }
   }
