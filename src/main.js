@@ -6,25 +6,17 @@ import router from './router'
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
 
-import {firebase} from './firebase-config'
+import store from './store'
 
-Vue.use(Vuetify)
+Vue.use(Vuetify);
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
-  created () {
-    firebase.auth().onAuthStateChanged((user) => {
-      if(user) {
-        this.$router.push('/')
-      } else {
-        this.$router.push('/login')
-      }
-    });
-  },
-  components: { App },
+  store,
+  components: {App},
   template: '<App/>'
-})
+});
