@@ -1,4 +1,4 @@
-import fb from 'firebase'
+import firebase from 'firebase';
 
 let config = {
   apiKey: "AIzaSyB2esHNzoA98EBFJOT7eDT3Ms6JqXlvyx8",
@@ -9,6 +9,6 @@ let config = {
   messagingSenderId: "407242321870"
 };
 
-fb.initializeApp(config);
+firebase.initializeApp(config);
 
-export const firebase = fb;
+export default firebase;

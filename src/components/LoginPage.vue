@@ -9,6 +9,8 @@
             </v-flex>
             <v-flex xs12 class="ma-3">
               <div id="firebaseui-auth-container"></div>
+              <!--<div v-if="!authenticating" id="firebaseui-auth-container" @click.native="authenticating = true"></div>-->
+              <!--<v-progress-circular v-else></v-progress-circular>-->
             </v-flex>
           </v-layout>
         </v-card>
@@ -19,7 +21,8 @@
 
 <script>
   require('firebaseui/dist/firebaseui.css');
-  import {firebase} from "../firebase-config";
+  import firebase from "../firebase-config";
+  require('firebase');
   import firebaseui from "firebaseui";
 
   // Initialize the FirebaseUI Widget using Firebase.
@@ -28,15 +31,12 @@
   let uiConfig = {
     signInSuccessUrl: '/',
     signInOptions: [
-      // List of OAuth providers supported.
+      // List of OAuth providers supported
       firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-      // firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-      // firebase.auth.TwitterAuthProvider.PROVIDER_ID,
-      // firebase.auth.GithubAuthProvider.PROVIDER_ID
     ],
     callbacks: {
       signInSuccessWithAuthResult: function(authResult, redirectUrl) {
-
+        // this.$store.commit('setUserSignedIn', true);
       },
       // signInFailure callback must be provided to handle merge conflicts which
       // occur when an existing credential is linked to an anonymous user.
@@ -61,6 +61,11 @@
     name: "LoginPage",
     mounted() {
       ui.start('#firebaseui-auth-container', uiConfig);
+    },
+    data() {
+      return {
+        authenticating: false
+      }
     }
   }
 </script>

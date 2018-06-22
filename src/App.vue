@@ -7,7 +7,7 @@
       enable-resize-watcher
       fixed
       app
-      v-if="this.$store.state.userSignedIn"
+      v-if="$store.state.userSignedIn"
     >
       <v-list>
         <v-list-tile
@@ -28,7 +28,7 @@
     <v-toolbar
       app
       :clipped-left="true"
-      v-if="this.$store.state.userSignedIn"
+      v-if="$store.state.userSignedIn"
     >
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
     </v-toolbar>
@@ -46,7 +46,7 @@
         items: [{
           icon: 'person',
           title: 'Sign out',
-          action: () => {
+          action:() => {
             this.$store.commit('signOut')
           }
         }],

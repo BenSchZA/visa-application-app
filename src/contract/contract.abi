@@ -1,0 +1,166 @@
+[
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "application",
+		"outputs": [
+			{
+				"name": "destination",
+				"type": "bytes32"
+			},
+			{
+				"name": "arrivalDate",
+				"type": "uint256"
+			},
+			{
+				"name": "departureDate",
+				"type": "uint256"
+			},
+			{
+				"name": "submitted",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [],
+		"name": "submit",
+		"outputs": [
+			{
+				"name": "success",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "applicant",
+		"outputs": [
+			{
+				"name": "addr",
+				"type": "address"
+			},
+			{
+				"name": "name",
+				"type": "bytes32"
+			},
+			{
+				"name": "id",
+				"type": "uint256"
+			},
+			{
+				"name": "birthDate",
+				"type": "uint256"
+			},
+			{
+				"name": "applied",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "destination",
+				"type": "bytes32"
+			},
+			{
+				"name": "arrivalDate",
+				"type": "uint256"
+			},
+			{
+				"name": "departureDate",
+				"type": "uint256"
+			}
+		],
+		"name": "apply",
+		"outputs": [
+			{
+				"name": "success",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"name": "name",
+				"type": "bytes32"
+			},
+			{
+				"name": "id",
+				"type": "uint256"
+			},
+			{
+				"name": "birthDate",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "sender",
+				"type": "address"
+			}
+		],
+		"name": "Updating",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "sender",
+				"type": "address"
+			}
+		],
+		"name": "Applying",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "sender",
+				"type": "address"
+			}
+		],
+		"name": "Applied",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "sender",
+				"type": "address"
+			}
+		],
+		"name": "Submitted",
+		"type": "event"
+	}
+]
