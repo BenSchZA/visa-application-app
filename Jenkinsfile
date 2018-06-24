@@ -7,11 +7,6 @@ pipeline {
 
   }
   stages {
-    stage('Config') {
-      steps {
-        sh 'export PORT=3000 && export NODE_ENV=production'
-      }
-    }
     stage('Build') {
       steps {
         sh 'npm install && npm build '
