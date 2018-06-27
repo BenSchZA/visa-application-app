@@ -8,9 +8,7 @@
               <div class="headline">Before we start your Visa Application process,<br/> please sign in:</div>
             </v-flex>
             <v-flex xs12 class="ma-3">
-              <!--<div id="firebaseui-auth-container"></div>-->
-              <div v-if="!authenticating" id="firebaseui-auth-container" @click.native="authenticating = true"></div>
-              <v-progress-circular v-else></v-progress-circular>
+              <div id="firebaseui-auth-container"></div>
             </v-flex>
           </v-layout>
         </v-card>
@@ -35,11 +33,6 @@
       firebase.auth.GoogleAuthProvider.PROVIDER_ID,
     ],
     callbacks: {
-      signInSuccessWithAuthResult: function(authResult, redirectUrl) {
-        // this.$store.commit('setUserSignedIn', true);
-      },
-      // signInFailure callback must be provided to handle merge conflicts which
-      // occur when an existing credential is linked to an anonymous user.
       signInFailure: function(error) {
         // For merge conflicts, the error.code will be
         // 'firebaseui/anonymous-upgrade-merge-conflict'.
@@ -61,23 +54,6 @@
     name: "LoginPage",
     mounted() {
       ui.start('#firebaseui-auth-container', uiConfig);
-    },
-    created() {
-      if(firebase.auth().currentUser != null) {
-        this.$router.push('/');
-        this.$store.commit('setUserSignedIn', true);
-        return;
-      }
-
-      firebase.auth().onAuthStateChanged((user) => {
-        console.log('Auth state changed: ' + user);
-        if (user) {
-          this.$router.push('/');
-          this.$store.commit('setUserSignedIn', true);
-        } else {
-          this.$store.commit('setUserSignedIn', false);
-        }
-      })
     },
     data() {
       return {

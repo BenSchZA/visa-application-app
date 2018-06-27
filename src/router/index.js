@@ -27,10 +27,49 @@ let router = new Router({
       name: 'LoginPage',
       component: LoginPage,
       meta: {
-        auth: false
+        auth: false,
+        login: true,
       }
     },
   ]
+});
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.auth)) {
+    if(firebase.auth().currentUser != null) {
+      next();
+      store.commit('setUserSignedIn', true);
+    } else {
+      firebase.auth().onAuthStateChanged((user) => {
+        console.log('Auth state changed: ' + user);
+        if (user) {
+          next();
+          store.commit('setUserSignedIn', true);
+        } else {
+          next('/login');
+          store.commit('setUserSignedIn', false);
+        }
+      })
+    }
+  } else if(to.matched.some(record => record.meta.login)) {
+    if(firebase.auth().currentUser != null) {
+      next('/');
+      store.commit('setUserSignedIn', true);
+    } else {
+      firebase.auth().onAuthStateChanged((user) => {
+        console.log('Auth state changed: ' + user);
+        if (user) {
+          next('/');
+          store.commit('setUserSignedIn', true);
+        } else {
+          next();
+          store.commit('setUserSignedIn', false);
+        }
+      })
+    }
+  } else {
+    next()
+  }
 });
 
 export default router;

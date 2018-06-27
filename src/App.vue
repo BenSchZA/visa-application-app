@@ -41,27 +41,7 @@
 </template>
 
 <script>
-  import firebase from './firebase-config'
-
   export default {
-    beforeRouteEnter() {
-      if(firebase.auth().currentUser != null) {
-        this.$router.push('/');
-        this.$store.commit('setUserSignedIn', true);
-        return;
-      }
-
-      firebase.auth().onAuthStateChanged((user) => {
-        console.log('Auth state changed: ' + user);
-        if (user) {
-          this.$router.push('/');
-          this.$store.commit('setUserSignedIn', true);
-        } else {
-          this.$router.push('/login');
-          this.$store.commit('setUserSignedIn', false);
-        }
-      })
-    },
     data() {
       return {
         drawer: false,
