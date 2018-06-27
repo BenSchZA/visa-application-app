@@ -6,8 +6,8 @@
           <v-card-title class="headline">
             Visa Application
           </v-card-title>
-          <v-card-title class="headline">
-            Contract Address: {{}}
+          <v-card-title v-if="$store.state.contractAddress">
+            Contract Address: {{$store.state.contractAddress}}
           </v-card-title>
           <v-card-media src="http://www.cousineisland.com/wp-content/uploads/2018/01/cousine-island-2-home.jpg" height="200px">
           </v-card-media>

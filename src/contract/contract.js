@@ -41,6 +41,7 @@ class Contract {
           console.log(newContractInstance.options.address);
           self.CONTRACT_ADDRESS = newContractInstance.options.address;
           self.VISA_APPLICTION_CONTRACT.options.address = self.CONTRACT_ADDRESS;
+          store.commit('setContractAddress', self.CONTRACT_ADDRESS);
 
           store.commit('showSnackbar', {text: 'Contract deployed', action: 'Okay'});
           store.commit('setInTransaction', false);

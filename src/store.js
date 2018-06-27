@@ -46,6 +46,9 @@ export default new Vuex.Store({
     setContract(state, contract) {
       state.contract = contract;
     },
+    setContractAddress(state, address) {
+      state.contractAddress = address;
+    },
     openMetaMaskDialog(state) {
       state.metaMaskDialog = true;
     },
