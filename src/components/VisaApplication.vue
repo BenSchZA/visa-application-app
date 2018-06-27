@@ -204,8 +204,8 @@
         bdMenu: false,
         depMenu: false,
         arrMenu: false,
-        personalDetailsValid: true,
-        travelDetailsValid: true,
+        personalDetailsValid: false,
+        travelDetailsValid: false,
         name: '',
         nameRules: [
           v => !!v || 'Name is required',
