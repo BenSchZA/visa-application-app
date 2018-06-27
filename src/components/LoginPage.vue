@@ -8,9 +8,9 @@
               <div class="headline">Before we start your Visa Application process,<br/> please sign in:</div>
             </v-flex>
             <v-flex xs12 class="ma-3">
-              <div id="firebaseui-auth-container"></div>
-              <!--<div v-if="!authenticating" id="firebaseui-auth-container" @click.native="authenticating = true"></div>-->
-              <!--<v-progress-circular v-else></v-progress-circular>-->
+              <!--<div id="firebaseui-auth-container"></div>-->
+              <div v-if="!authenticating" id="firebaseui-auth-container" @click.native="authenticating = true"></div>
+              <v-progress-circular v-else></v-progress-circular>
             </v-flex>
           </v-layout>
         </v-card>
@@ -61,6 +61,23 @@
     name: "LoginPage",
     mounted() {
       ui.start('#firebaseui-auth-container', uiConfig);
+    },
+    created() {
+      if(firebase.auth().currentUser != null) {
+        this.$router.push('/');
+        this.$store.commit('setUserSignedIn', true);
+        return;
+      }
+
+      firebase.auth().onAuthStateChanged((user) => {
+        console.log('Auth state changed: ' + user);
+        if (user) {
+          this.$router.push('/');
+          this.$store.commit('setUserSignedIn', true);
+        } else {
+          this.$store.commit('setUserSignedIn', false);
+        }
+      })
     },
     data() {
       return {

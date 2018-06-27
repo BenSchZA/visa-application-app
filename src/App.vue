@@ -1,5 +1,7 @@
 <template>
   <v-app>
+    <v-progress-linear v-if="$store.state.inTransaction" style="margin: 0;" ref="progressBar" :indeterminate="true" height="4"></v-progress-linear>
+
     <v-navigation-drawer
       persistent
       :clipped="true"
@@ -39,7 +41,27 @@
 </template>
 
 <script>
+  import firebase from './firebase-config'
+
   export default {
+    beforeRouteEnter() {
+      if(firebase.auth().currentUser != null) {
+        this.$router.push('/');
+        this.$store.commit('setUserSignedIn', true);
+        return;
+      }
+
+      firebase.auth().onAuthStateChanged((user) => {
+        console.log('Auth state changed: ' + user);
+        if (user) {
+          this.$router.push('/');
+          this.$store.commit('setUserSignedIn', true);
+        } else {
+          this.$router.push('/login');
+          this.$store.commit('setUserSignedIn', false);
+        }
+      })
+    },
     data() {
       return {
         drawer: false,

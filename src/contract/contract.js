@@ -8,6 +8,8 @@ class Contract {
   CONTRACT_ADDRESS = undefined;
 
   constructor(name, id, birthDate) {
+    if(!this.web3) return;
+
     // let fs = require('fs');
     // let contractAbiFile = "contract.abi";
     // let abi = JSON.parse(fs.readFileSync(contractAbiFile));
@@ -16,6 +18,7 @@ class Contract {
     this.VISA_APPLICTION_CONTRACT = new this.web3.eth.Contract(abi);
 
     store.commit('showSnackbar', {text: 'Deploying contract', action: 'Okay'});
+    store.commit('setInTransaction', true);
 
     let self = this;
     this.web3.eth.getAccounts().then(function (accounts) {
@@ -37,14 +40,18 @@ class Contract {
         .then(function(newContractInstance){
           console.log(newContractInstance.options.address);
           self.CONTRACT_ADDRESS = newContractInstance.options.address;
+          self.VISA_APPLICTION_CONTRACT.options.address = self.CONTRACT_ADDRESS;
 
           store.commit('showSnackbar', {text: 'Contract deployed', action: 'Okay'});
+          store.commit('setInTransaction', false);
+          store.commit('setApplicationProcess', 2);
         });
     });
   }
 
   apply(destination, arrivalDate, departureDate) {
     store.commit('showSnackbar', {text: 'Entering visa details', action: 'Okay'});
+    store.commit('setInTransaction', true);
 
     let self = this;
     this.web3.eth.getAccounts().then(function (accounts) {
@@ -65,16 +72,19 @@ class Contract {
         .on('error', console.error)
         .then(function (newContractInstance) {
           store.commit('showSnackbar', {text: 'Entered visa details', action: 'Okay'});
+          store.commit('setInTransaction', false);
+          store.commit('setApplicationProcess', 3);
         });
     })
   }
 
   submit() {
     store.commit('showSnackbar', {text: 'Submitting visa application', action: 'Okay'});
+    store.commit('setInTransaction', true);
 
     let self = this;
     this.web3.eth.getAccounts().then(function (accounts) {
-      self.VISA_APPLICTION_CONTRACT.methods.VISA_APPLICTION_CONTRACT.methods.submit()
+      self.VISA_APPLICTION_CONTRACT.methods.submit()
         .send({
           from: accounts[0]
         }, function (error, transactionHash) {
@@ -91,6 +101,7 @@ class Contract {
         .on('error', console.error)
         .then(function (newContractInstance) {
           store.commit('showSnackbar', {text: 'Submitted visa application', action: 'Okay'});
+          store.commit('setInTransaction', false);
         });
     })
   }

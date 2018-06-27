@@ -6,6 +6,9 @@
           <v-card-title class="headline">
             Visa Application
           </v-card-title>
+          <v-card-title class="headline">
+            Contract Address: {{}}
+          </v-card-title>
           <v-card-media src="http://www.cousineisland.com/wp-content/uploads/2018/01/cousine-island-2-home.jpg" height="200px">
           </v-card-media>
           <v-stepper v-model="$store.state.applicationProcess">
@@ -19,13 +22,14 @@
             <v-stepper-items>
               <v-stepper-content step="1">
 
-                <v-form ref="form" v-model="valid" lazy-validation>
+                <v-form ref="personalDetailsForm" v-model="personalDetailsValid" lazy-validation>
                   <v-text-field
                     name="name"
                     v-model="name"
                     :rules="nameRules"
                     label="Name"
                     required
+                    :disabled="$store.state.inTransaction"
                   ></v-text-field>
                   <v-text-field
                     name="id"
@@ -33,11 +37,12 @@
                     :rules="idRules"
                     label="ID"
                     required
+                    :disabled="$store.state.inTransaction"
                   ></v-text-field>
                   <v-menu
-                    ref="menu"
+                    ref="bdMenu"
                     :close-on-content-click="false"
-                    v-model="menu"
+                    v-model="bdMenu"
                     :nudge-right="40"
                     lazy
                     transition="scale-transition"
@@ -53,29 +58,97 @@
                       :rules="birthDateRules"
                       readonly
                       required
+                      :disabled="$store.state.inTransaction"
                     ></v-text-field>
                     <v-date-picker
                       ref="picker"
                       v-model="birthDate"
                       :max="new Date().toISOString().substr(0, 10)"
-                      min="1950-01-01"
-                      @change="save"
+                      min="1900-01-01"
+                      @change="saveBd"
                     ></v-date-picker>
                   </v-menu>
                 </v-form>
 
-                <v-btn :disabled="!valid" color="primary" @click.native="submitPersonalDetails">Continue</v-btn>
+                <v-btn :disabled="!personalDetailsValid" color="primary" @click.native="submitPersonalDetails">Continue</v-btn>
                 <v-btn @click="cancelPersonalDetails">Cancel</v-btn>
               </v-stepper-content>
               <v-stepper-content step="2">
-                <v-card color="grey lighten-1" class="mb-5" height="200px"></v-card>
-                <v-btn color="primary" @click.native="$store.commit('setApplicationProcess', 3)">Continue</v-btn>
-                <v-btn flat>Cancel</v-btn>
+                <v-form ref="travelDetailsForm" v-model="travelDetailsValid" lazy-validation>
+                  <v-text-field
+                    name="name"
+                    prepend-icon="local_airport"
+                    v-model="destination"
+                    :rules="destinationRules"
+                    label="Destination"
+                    required
+                    :disabled="$store.state.inTransaction"
+                  ></v-text-field>
+                  <v-menu
+                    ref="arrMenu"
+                    :close-on-content-click="false"
+                    v-model="arrMenu"
+                    :nudge-right="40"
+                    lazy
+                    transition="scale-transition"
+                    offset-y
+                    full-width
+                    min-width="290px"
+                  >
+                    <v-text-field
+                      slot="activator"
+                      v-model="arrivalDate"
+                      label="Arrival date"
+                      prepend-icon="event"
+                      :rules="arrivalDateRules"
+                      readonly
+                      required
+                      :disabled="$store.state.inTransaction"
+                    ></v-text-field>
+                    <v-date-picker
+                      ref="arrivalDatePicker"
+                      v-model="arrivalDate"
+                      :min="new Date().toISOString().split('T')[0]"
+                      @change="saveArr"
+                    ></v-date-picker>
+                  </v-menu>
+                  <v-menu
+                    ref="depMenu"
+                    :close-on-content-click="false"
+                    v-model="depMenu"
+                    :nudge-right="40"
+                    lazy
+                    transition="scale-transition"
+                    offset-y
+                    full-width
+                    min-width="290px"
+                  >
+                    <v-text-field
+                      slot="activator"
+                      v-model="departureDate"
+                      label="Departure date"
+                      prepend-icon="event"
+                      :rules="departureDateRules"
+                      readonly
+                      required
+                      :disabled="$store.state.inTransaction"
+                    ></v-text-field>
+                    <v-date-picker
+                      ref="departureDatePicker"
+                      v-model="departureDate"
+                      :min="new Date().toISOString().split('T')[0]"
+                      @change="saveDep"
+                    ></v-date-picker>
+                  </v-menu>
+                </v-form>
+
+                <v-btn :disabled="!travelDetailsValid" color="primary" @click.native="submitTravelDetails">Continue</v-btn>
+                <v-btn @click="cancelTravelDetails" flat>Cancel</v-btn>
               </v-stepper-content>
               <v-stepper-content step="3">
                 <v-card color="grey lighten-1" class="mb-5" height="200px"></v-card>
-                <v-btn color="primary" @click.native="">Submit</v-btn>
-                <v-btn flat @click="()=>{this.$router.go()}">Cancel</v-btn>
+                <v-btn color="primary" @click.native="submitApplication">Submit</v-btn>
+                <v-btn flat @click="cancelApplication">Cancel</v-btn>
               </v-stepper-content>
             </v-stepper-items>
           </v-stepper>
@@ -91,7 +164,7 @@
           <v-spacer></v-spacer>
         </v-card-title>
         <v-card-actions>
-          <v-btn color="primary" flat @click.stop="$store.state.commit('closeMetaMaskDialog')">Close</v-btn>
+          <v-btn color="primary" flat @click.stop="$store.commit('closeMetaMaskDialog')">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -114,7 +187,13 @@
   export default {
     name: "VisaApplication",
     watch: {
-      menu(val) {
+      bdMenu(val) {
+        val && this.$nextTick(() => (this.$refs.picker.activePicker = 'YEAR'))
+      },
+      depMenu(val) {
+        val && this.$nextTick(() => (this.$refs.picker.activePicker = 'YEAR'))
+      },
+      arrMenu(val) {
         val && this.$nextTick(() => (this.$refs.picker.activePicker = 'YEAR'))
       }
     },
@@ -122,8 +201,11 @@
       return {
         showSnackbar: false,
         el: 0,
-        menu: false,
-        valid: true,
+        bdMenu: false,
+        depMenu: false,
+        arrMenu: false,
+        personalDetailsValid: true,
+        travelDetailsValid: true,
         name: '',
         nameRules: [
           v => !!v || 'Name is required',
@@ -138,25 +220,75 @@
         birthDateRules: [
           v => !!v || 'Birth date is required',
           v => !isNaN(Date.parse(v)) || 'Invalid birth date'
-        ]
+        ],
+        destination: '',
+        destinationRules: [],
+        arrivalDate: null,
+        arrivalDateRules: [
+          v => !!v || 'Arrival date is required',
+          v => !isNaN(Date.parse(v)) || 'Invalid arrival date',
+          v => !this.departureDate || Date.parse(v) < Date.parse(this.departureDate)
+        ],
+        departureDate: null,
+        departureDateRules: [
+          v => !!v || 'Departure date is required',
+          v => !isNaN(Date.parse(v)) || 'Invalid departure date',
+          v => !this.arrivalDate || Date.parse(this.arrivalDate) < Date.parse(v),
+        ],
       }
     },
     methods: {
+      saveBd(date) {
+        this.$refs.bdMenu.save(date)
+      },
+      saveArr(date) {
+        this.$refs.arrMenu.save(date)
+      },
+      saveDep(date) {
+        this.$refs.depMenu.save(date)
+      },
       submitPersonalDetails() {
-        if (this.$refs.form.validate()) {
+        if (!this.$store.getters.web3) {
+          this.$store.commit('openMetaMaskDialog');
+          return
+        }
+
+        if (this.$refs.personalDetailsForm.validate()) {
           let _id = Number(this.id);
           let _birthDate = new Date(`${this.birthDate}Z`).getTime();
 
-          // let contract = new Contract(this.name, _id, _birthDate);
-          // console.log(contract.methods);
-          this.$store.commit('setApplicationProcess', 2)
+          let contract = new Contract(this.name, _id, _birthDate);
+          this.$store.commit('setContract', contract);
         }
       },
       cancelPersonalDetails() {
-        this.$refs.form.reset()
+        this.$refs.personalDetailsForm.reset()
       },
-      save(date) {
-        this.$refs.menu.save(date)
+      submitTravelDetails() {
+        if (!this.$store.getters.web3) {
+          this.$store.commit('openMetaMaskDialog');
+          return
+        }
+
+        if (this.$refs.travelDetailsForm.validate()) {
+          let _arrivalDate = new Date(`${this.arrivalDate}Z`).getTime();
+          let _departureDate = new Date(`${this.departureDate}Z`).getTime();
+
+          this.$store.state.contract.apply(this.destination, _arrivalDate, _departureDate);
+        }
+      },
+      cancelTravelDetails() {
+
+      },
+      submitApplication() {
+        if (!this.$store.getters.web3) {
+          this.$store.commit('openMetaMaskDialog');
+          return
+        }
+        this.$store.state.contract.submit();
+      },
+      cancelApplication() {
+
       }
     }
   }
