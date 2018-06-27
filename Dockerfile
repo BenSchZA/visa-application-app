@@ -1,12 +1,12 @@
-FROM node
+FROM node:carbon
 
 RUN mkdir -p /usr/src/app
 
 WORKDIR /usr/src/app
 ADD . /usr/src/app
-RUN npm install
+RUN yarn install
 
-RUN npm run build
+RUN yarn run build
 
 EXPOSE 3000
 CMD [ "npm", "start" ]
